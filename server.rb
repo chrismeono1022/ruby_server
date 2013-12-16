@@ -10,7 +10,7 @@ CONTENT_TYPE = {
   'jpg' => 'image/jpeg'
 }
 
-# parse path and find content type; 'application/octet-stream' default for files without an extension (treated as binary) 
+# parse path (ie "./public/home.html") and find content type; 'application/octet-stream' default for files without an extension (treated as binary) 
 def content_type(path)
   extension = path.split(".").last
   type = CONTENT_TYPE[extension] ||= 'application/octet-stream'
@@ -39,7 +39,7 @@ server = TCPServer.new('localhost', 2345)
 STDERR.puts 'Server running on localhost:2345'
 
 # continous loop to process connections
-loop do
+loop do 
 
   socket = server.accept
 
@@ -53,7 +53,7 @@ loop do
 
   # check if file exists and isn't a directory before opening it
   if File.exists?(path) && !File.directory?(path)
-    File.open(path, 'rb') do |file|
+    File.open(path, 'r') do |file|
       # a response is composed of a protocol/status code, content-type, content-length informing the client the size and type of data expected. HTTP is whitespace sensitive, and expects a new line "\r\n" at the end of each header
       socket.print "HTTP/1.1 200 OK\r\n" + 
                 "Content-Type: #{content_type(path)}\r\n" +
